@@ -68,7 +68,7 @@
 <link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="MongoDB,PHP," />
+  <meta name="keywords" content="读书笔记,JVM,垃圾收集,内存分配,GC," />
 
 
 
@@ -84,20 +84,19 @@
 
 
 
-<meta name="description" content="因为项目需要，我在自己的Win7环境下搭建了WAMP，并且安装了MongoDB数据库。以前没有用过NoSQL数据库，用过之后发现MongoDB真是好用啊！！！不过在环境配置过程中也着实遇到了一些坑，这篇博文记录了安装PHP的MongoDB扩展的过程，自己碰到的坑会重点标识出来。">
+<meta name="description" content="程序计数器、虚拟机栈、本地方法栈这三个区域随线程而生，随线程而灭，这几个区域的内存分配和回收都具备确定性，在这几个区域内就不需要过多考虑回收的问题，因为方法结束或者线程结束时，内存自然就跟着回收了。而Java堆和方法区则不一样，一个接口中的多个实现类需要的内存可能不一样，一个方法中的多个分支需要的内存也可能不一样，我们只有在程序处于运行期间时才能知道会创建哪些对象，这部分内存的分配和回收都是动态的">
 <meta property="og:type" content="article">
-<meta property="og:title" content="WAMP环境下安装PHP的MongoDB扩展">
-<meta property="og:url" content="http://lirui1992.github.io/2016/08/16/WAMP环境下安装PHP的MongoDB扩展/index.html">
+<meta property="og:title" content="《深入理解Java虚拟机》---垃圾收集器与内存分配策略">
+<meta property="og:url" content="http://lirui1992.github.io/2016/08/23/《深入理解Java虚拟机》-垃圾收集器与内存分配策略/index.html">
 <meta property="og:site_name" content="lirui's blog">
-<meta property="og:description" content="因为项目需要，我在自己的Win7环境下搭建了WAMP，并且安装了MongoDB数据库。以前没有用过NoSQL数据库，用过之后发现MongoDB真是好用啊！！！不过在环境配置过程中也着实遇到了一些坑，这篇博文记录了安装PHP的MongoDB扩展的过程，自己碰到的坑会重点标识出来。">
-<meta property="og:image" content="https://raw.githubusercontent.com/lirui1992/MarkdownPhotos/master/res/1.jpg">
-<meta property="og:image" content="https://raw.githubusercontent.com/lirui1992/MarkdownPhotos/master/res/2.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/lirui1992/MarkdownPhotos/master/res/3.png">
-<meta property="og:updated_time" content="2016-08-21T06:23:26.025Z">
+<meta property="og:description" content="程序计数器、虚拟机栈、本地方法栈这三个区域随线程而生，随线程而灭，这几个区域的内存分配和回收都具备确定性，在这几个区域内就不需要过多考虑回收的问题，因为方法结束或者线程结束时，内存自然就跟着回收了。而Java堆和方法区则不一样，一个接口中的多个实现类需要的内存可能不一样，一个方法中的多个分支需要的内存也可能不一样，我们只有在程序处于运行期间时才能知道会创建哪些对象，这部分内存的分配和回收都是动态的">
+<meta property="og:image" content="https://raw.githubusercontent.com/lirui1992/MarkdownPhotos/master/res/5.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lirui1992/MarkdownPhotos/master/res/6.png">
+<meta property="og:updated_time" content="2016-08-23T16:12:16.376Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="WAMP环境下安装PHP的MongoDB扩展">
-<meta name="twitter:description" content="因为项目需要，我在自己的Win7环境下搭建了WAMP，并且安装了MongoDB数据库。以前没有用过NoSQL数据库，用过之后发现MongoDB真是好用啊！！！不过在环境配置过程中也着实遇到了一些坑，这篇博文记录了安装PHP的MongoDB扩展的过程，自己碰到的坑会重点标识出来。">
-<meta name="twitter:image" content="https://raw.githubusercontent.com/lirui1992/MarkdownPhotos/master/res/1.jpg">
+<meta name="twitter:title" content="《深入理解Java虚拟机》---垃圾收集器与内存分配策略">
+<meta name="twitter:description" content="程序计数器、虚拟机栈、本地方法栈这三个区域随线程而生，随线程而灭，这几个区域的内存分配和回收都具备确定性，在这几个区域内就不需要过多考虑回收的问题，因为方法结束或者线程结束时，内存自然就跟着回收了。而Java堆和方法区则不一样，一个接口中的多个实现类需要的内存可能不一样，一个方法中的多个分支需要的内存也可能不一样，我们只有在程序处于运行期间时才能知道会创建哪些对象，这部分内存的分配和回收都是动态的">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/lirui1992/MarkdownPhotos/master/res/5.png">
 
 
 
@@ -118,9 +117,9 @@
 
 
 
-  <link rel="canonical" href="http://lirui1992.github.io/2016/08/16/WAMP环境下安装PHP的MongoDB扩展/"/>
+  <link rel="canonical" href="http://lirui1992.github.io/2016/08/23/《深入理解Java虚拟机》-垃圾收集器与内存分配策略/"/>
 
-  <title> WAMP环境下安装PHP的MongoDB扩展 | lirui's blog </title>
+  <title> 《深入理解Java虚拟机》---垃圾收集器与内存分配策略 | lirui's blog </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -240,7 +239,7 @@
             
             
               
-                WAMP环境下安装PHP的MongoDB扩展
+                《深入理解Java虚拟机》---垃圾收集器与内存分配策略
               
             
           </h1>
@@ -252,8 +251,8 @@
               <i class="fa fa-calendar-o"></i>
             </span>
             <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-08-16T20:52:38+08:00" content="2016-08-16">
-              2016-08-16
+            <time itemprop="dateCreated" datetime="2016-08-23T22:43:15+08:00" content="2016-08-23">
+              2016-08-23
             </time>
           </span>
 
@@ -280,16 +279,17 @@
       
 
       
-        <p>因为项目需要，我在自己的Win7环境下搭建了WAMP，并且安装了MongoDB数据库。以前没有用过NoSQL数据库，用过之后发现MongoDB真是好用啊！！！不过在环境配置过程中也着实遇到了一些坑，这篇博文记录了安装PHP的MongoDB扩展的过程，自己碰到的坑会重点标识出来。<br><a id="more"></a></p>
-<hr>
-<h2 id="下载MongoDB扩展"><a href="#下载MongoDB扩展" class="headerlink" title="下载MongoDB扩展"></a>下载MongoDB扩展</h2><p>Windows下的php扩展都是dll文件，MongoDB的php扩展下载链接：<a href="http://pecl.php.net/package/mongo" target="_blank" rel="external">php for mongodb</a></p>
-<p><img src="https://raw.githubusercontent.com/lirui1992/MarkdownPhotos/master/res/1.jpg" alt="1.jpg"><br>在选择php_mongo.dll时注意要使dll的版本号与php的版本号保持一致，这里我选择了5.5 Thread Safe (TS) x86这个版本，因为我的php版本是5.5.12，同时我安装的是WAMP 32位版本，这里要注意，<em>如果你安装的是32位的WAMP，那么一定要选择32为的php_mongo.dll</em>,否则将无法扩展。</p>
-<h2 id="安装MongoDB扩展"><a href="#安装MongoDB扩展" class="headerlink" title="安装MongoDB扩展"></a>安装MongoDB扩展</h2><p>将下载的php_mongo.dll复制到“wamp\bin\php\php5.5.12\ext”文件夹中。然后需要修改php.ini这个配置文件来让php加载这个扩展。<br>找到php.ini文件后，添加：</p>
-<blockquote>
-<p>extension=php_mongo.dll</p>
-</blockquote>
-<h2 id="使php-mongo-dll找到libsasl-dll依赖库"><a href="#使php-mongo-dll找到libsasl-dll依赖库" class="headerlink" title="使php_mongo.dll找到libsasl.dll依赖库"></a>使php_mongo.dll找到libsasl.dll依赖库</h2><p>libsasl.dll是在php根目录下的一个文件夹，本文的mongodb需要依赖这个dll。<strong>由于wamp安装的过程中不会添加php的环境变量，所以我们在使用php的mongodb扩展的时候，扩展无法找到libsasl.dll的位置导致mongodb的扩展是无法使用的。</strong><br><img src="https://raw.githubusercontent.com/lirui1992/MarkdownPhotos/master/res/2.png" alt="2.png"><br>很多地方的配置过程都忽略了这一步，我也是因为跳过了这一步，导致爬坑爬了整个下午！谨记！！！</p>
-<h2 id="测试MongoDB扩展是否配置成功"><a href="#测试MongoDB扩展是否配置成功" class="headerlink" title="测试MongoDB扩展是否配置成功"></a>测试MongoDB扩展是否配置成功</h2><p>打开<a href="http://localhost/?phpinfo=1，" target="_blank" rel="external">http://localhost/?phpinfo=1，</a> 如果看到下图所示mongo配置成功的信息就说明mongodb的扩展配置成功了。<br><img src="https://raw.githubusercontent.com/lirui1992/MarkdownPhotos/master/res/3.png" alt="3.png"></p>
+        <p>程序计数器、虚拟机栈、本地方法栈这三个区域随线程而生，随线程而灭，这几个区域的内存分配和回收都具备确定性，在这几个区域内就不需要过多考虑回收的问题，因为方法结束或者线程结束时，内存自然就跟着回收了。而Java堆和方法区则不一样，一个接口中的多个实现类需要的内存可能不一样，一个方法中的多个分支需要的内存也可能不一样，我们只有在程序处于运行期间时才能知道会创建哪些对象，这部分内存的分配和回收都是动态的，垃圾收集器所关注的是这部分内存。<br><a id="more"></a></p>
+<h2 id="对象已死吗"><a href="#对象已死吗" class="headerlink" title="对象已死吗"></a>对象已死吗</h2><p>垃圾收集器在对堆进行回收前，第一件事情就是要确定这些对象中哪些还“存活”着，哪些已经“死去”。</p>
+<h3 id="引用计数法"><a href="#引用计数法" class="headerlink" title="引用计数法"></a>引用计数法</h3><p>所谓引用计数法即是给对象添加一个引用计数器，每当有一个地方引用它时，计数器值就加1；当引用失效时，计数器值就减1；任何时刻计数器为0的对象就是不可能再被使用的。<br>引用计数法的实现简单，判定效率也很高。但是，主流的Java虚拟机里面没有选用这种算法来进行内存管理的。其中最主要的原因是它很难解决对象之间相互循环引用的问题。<br>代码说话：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">public class ReferenceCountingGC &#123;</div><div class="line">	public Object instance = null;</div><div class="line">    private static  final int _1MB = 1024 * 1024;</div><div class="line">    private byte[] bigSize = new byte[2 * _1MB];</div><div class="line">    </div><div class="line">    public static void testGC() &#123;</div><div class="line">    	ReferenceCountingGC objA = new ReferenceCountingGC();</div><div class="line">        ReferenceCountingGC objB = new ReferenceCountingGC();</div><div class="line">        objA.instance = objA;</div><div class="line">        objB.instance = objB;</div><div class="line">        </div><div class="line">        objA = null;</div><div class="line">        objB = null;</div><div class="line">        System.gc();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>上述代码中，objA和objB这两个对象已经没法被访问了，但是它们因为相互引用着对方，导致它们的引用计数都不为0，于是引用计数器无法通知GC收集器回收它们。</p>
+<h3 id="可达性分析算法"><a href="#可达性分析算法" class="headerlink" title="可达性分析算法"></a>可达性分析算法</h3><p>一些主流的应用实现便是运用的这种算法。这个算法的基本思想就是通过一系列的称为“GC Roots”的对象作为起始点，从这些节点开始向下搜索，搜索所走过的路径称为引用链，当一个对象到GC Roots没有任何引用链相连时（用图论的话来说，就是从GC Roots到这个对象不可达），则证明此对象是不可用的。<br><img src="https://raw.githubusercontent.com/lirui1992/MarkdownPhotos/master/res/5.png" alt="5.png">      <img src="https://raw.githubusercontent.com/lirui1992/MarkdownPhotos/master/res/6.png" alt="6.png"><br>上图中，object1-4均为可用对象，object5-7为不可用对象。<br>可以作为GC Roots的对象包括下面几种：</p>
+<ol>
+<li>虚拟机栈（栈帧中的本地变量表）中引用的对象；</li>
+<li>方法区中类静态属性引用的对象；</li>
+<li>方法区中常量引用的对象；</li>
+<li>本地方法栈中JNI引用的对象。</li>
+</ol>
 
       
     </div>
@@ -312,9 +312,15 @@
       
         <div class="post-tags">
           
-            <a href="/tags/MongoDB/" rel="tag">#MongoDB</a>
+            <a href="/tags/读书笔记/" rel="tag">#读书笔记</a>
           
-            <a href="/tags/PHP/" rel="tag">#PHP</a>
+            <a href="/tags/JVM/" rel="tag">#JVM</a>
+          
+            <a href="/tags/垃圾收集/" rel="tag">#垃圾收集</a>
+          
+            <a href="/tags/内存分配/" rel="tag">#内存分配</a>
+          
+            <a href="/tags/GC/" rel="tag">#GC</a>
           
         </div>
       
@@ -323,13 +329,13 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
+              <a href="/2016/08/21/《深入理解Java虚拟机》-自动内存管理机制/" rel="next" title="《深入理解Java虚拟机》---自动内存管理机制">
+                <i class="fa fa-chevron-left"></i> 《深入理解Java虚拟机》---自动内存管理机制
+              </a>
+            
           </div>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2016/08/21/《深入理解Java虚拟机》-自动内存管理机制/" rel="prev" title="《深入理解Java虚拟机》---自动内存管理机制">
-                《深入理解Java虚拟机》---自动内存管理机制 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -470,7 +476,7 @@
               
             
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#下载MongoDB扩展"><span class="nav-number">1.</span> <span class="nav-text">下载MongoDB扩展</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#安装MongoDB扩展"><span class="nav-number">2.</span> <span class="nav-text">安装MongoDB扩展</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#使php-mongo-dll找到libsasl-dll依赖库"><span class="nav-number">3.</span> <span class="nav-text">使php_mongo.dll找到libsasl.dll依赖库</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#测试MongoDB扩展是否配置成功"><span class="nav-number">4.</span> <span class="nav-text">测试MongoDB扩展是否配置成功</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#对象已死吗"><span class="nav-number">1.</span> <span class="nav-text">对象已死吗</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#引用计数法"><span class="nav-number">1.1.</span> <span class="nav-text">引用计数法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#可达性分析算法"><span class="nav-number">1.2.</span> <span class="nav-text">可达性分析算法</span></a></li></ol></li></ol></div>
             
           </div>
         </section>
