@@ -92,7 +92,7 @@
 <meta property="og:description" content="程序计数器、虚拟机栈、本地方法栈这三个区域随线程而生，随线程而灭，这几个区域的内存分配和回收都具备确定性，在这几个区域内就不需要过多考虑回收的问题，因为方法结束或者线程结束时，内存自然就跟着回收了。而Java堆和方法区则不一样，一个接口中的多个实现类需要的内存可能不一样，一个方法中的多个分支需要的内存也可能不一样，我们只有在程序处于运行期间时才能知道会创建哪些对象，这部分内存的分配和回收都是动态的">
 <meta property="og:image" content="https://raw.githubusercontent.com/lirui1992/MarkdownPhotos/master/res/5.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/lirui1992/MarkdownPhotos/master/res/6.png">
-<meta property="og:updated_time" content="2016-08-23T16:12:16.376Z">
+<meta property="og:updated_time" content="2016-08-24T01:49:43.041Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="《深入理解Java虚拟机》---垃圾收集器与内存分配策略">
 <meta name="twitter:description" content="程序计数器、虚拟机栈、本地方法栈这三个区域随线程而生，随线程而灭，这几个区域的内存分配和回收都具备确定性，在这几个区域内就不需要过多考虑回收的问题，因为方法结束或者线程结束时，内存自然就跟着回收了。而Java堆和方法区则不一样，一个接口中的多个实现类需要的内存可能不一样，一个方法中的多个分支需要的内存也可能不一样，我们只有在程序处于运行期间时才能知道会创建哪些对象，这部分内存的分配和回收都是动态的">
@@ -290,6 +290,22 @@
 <li>方法区中常量引用的对象；</li>
 <li>本地方法栈中JNI引用的对象。</li>
 </ol>
+<p>在JDK 1.2之后，Java对引用的概念进行了扩充，将引用分为强引用、软引用、弱引用、虚引用4种，这4种引用强度依次逐渐减弱。</p>
+<h3 id="最后的挣扎"><a href="#最后的挣扎" class="headerlink" title="最后的挣扎"></a>最后的挣扎</h3><p>即使在可达性分析算法中不可达的对象，也并非“非死不可”的，这时候它们暂时处于“缓刑”阶段，要真正宣告一个对象死亡，至少要经历两次标记过程：如果对象在进行可达性分析后发现没有与GC Roots相连接的引用链，那它将会被第一次标记并且进行一次筛选，筛选的条件是此对象是否有必要执行finalize()方法。当对象没有覆盖finalize()方法，或者finalize方法已经被虚拟机调用过，虚拟机将这两种情况都视为“没有必要执行”。<br>finalize()方法是对象逃脱死亡命运的最后一次机会，如果对象要在finalize()中拯救自己，只要重新与引用链上的任何一个对象建立关联即可。</p>
+<h3 id="方法区的回收"><a href="#方法区的回收" class="headerlink" title="方法区的回收"></a>方法区的回收</h3><p>在HotSpot虚拟机中，方法区也被称作永久代，在方法区中进行垃圾回收的性价比一般比较低。在队中，尤其是在新生代中，常规应用进行一次垃圾收集一般可以回收70%~95%的空间，而永久代的回收效率远低于此。<br>永久代的垃圾回收主要包括两部分内容：废弃变量和无用的类。回收废弃变量与回收堆中的对象十分类似。而判断一个类是否是“无用的类”需要满足以下三个条件：</p>
+<ol>
+<li>该类所有的实例都已经被回收，也就是Java堆中不存在该类的任何实例；</li>
+<li>加载该类的ClassLoader已经被回收；</li>
+<li>该类对应的java.lang.Class对象没有在任何地方被引用，无法在任何地方通过反射访问该类的方法。</li>
+</ol>
+<h2 id="垃圾收集算法"><a href="#垃圾收集算法" class="headerlink" title="垃圾收集算法"></a>垃圾收集算法</h2><h3 id="标记-清除算法"><a href="#标记-清除算法" class="headerlink" title="标记-清除算法"></a>标记-清除算法</h3><p>该算法分为“标记”和“清除”两个阶段：首先标记处所有需要回收的对象，在标记完成之后统一回收所有被标记的对象。<br>该算法简单易实施，但是有两个不足：</p>
+<ol>
+<li>效率问题，标记和清除的效率都不高；</li>
+<li>空间问题，标记清除后会产生大量不连续的内存碎片，空间碎片太多可能会导致以后在程序运行过程中需要分配大对象时，无法找到足够的连续内存而不得不提前触发另一次垃圾收集动作。</li>
+</ol>
+<h3 id="复制算法"><a href="#复制算法" class="headerlink" title="复制算法"></a>复制算法</h3><p>现在的商业虚拟机多采用这种收集算法来回收新生代，新生代中的对象98%是“朝生夕死”的，所以不需要按照1:1的比例来划分内存空间，而是将内存划分为一块较大的Eden空间和两块较小的Survivor空间，这两块空间的大小比例是8：1。当回收时，将Eden和Survivor中还存活着的对象一次性地复制到另外一块Survivor空间上，最后清理掉Eden和刚才用过的Survivor空间。当Survivor空间不够用时，需要依赖其他内存（这里指老年代）进行分配担保。</p>
+<h3 id="标记整理算法"><a href="#标记整理算法" class="headerlink" title="标记整理算法"></a>标记整理算法</h3><p>复制算法在对象存活率较高时就要进行较多的复制操作，效率将会变低，所以老年代一般不能直接选用这种算法。<br>根据老年代的特点，有人提出了一种“标记-整理”算法，标记过程仍然与“标记-清除”算法一样，但后续步骤不是直接对可回收对象进行清理，而是让所有存活的对象都向一端移动，然后直接清理掉端边界以外的内存。</p>
+<p>当前的商业虚拟机都采用“分代收集”算法，即将Java堆分为新生代和老年代，新生代采用复制算法，老年代使用“标记-清理”或者“标记-整理”算法来进行回收。</p>
 
       
     </div>
@@ -476,7 +492,7 @@
               
             
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#对象已死吗"><span class="nav-number">1.</span> <span class="nav-text">对象已死吗</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#引用计数法"><span class="nav-number">1.1.</span> <span class="nav-text">引用计数法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#可达性分析算法"><span class="nav-number">1.2.</span> <span class="nav-text">可达性分析算法</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#对象已死吗"><span class="nav-number">1.</span> <span class="nav-text">对象已死吗</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#引用计数法"><span class="nav-number">1.1.</span> <span class="nav-text">引用计数法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#可达性分析算法"><span class="nav-number">1.2.</span> <span class="nav-text">可达性分析算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#最后的挣扎"><span class="nav-number">1.3.</span> <span class="nav-text">最后的挣扎</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#方法区的回收"><span class="nav-number">1.4.</span> <span class="nav-text">方法区的回收</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#垃圾收集算法"><span class="nav-number">2.</span> <span class="nav-text">垃圾收集算法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#标记-清除算法"><span class="nav-number">2.1.</span> <span class="nav-text">标记-清除算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#复制算法"><span class="nav-number">2.2.</span> <span class="nav-text">复制算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#标记整理算法"><span class="nav-number">2.3.</span> <span class="nav-text">标记整理算法</span></a></li></ol></li></ol></div>
             
           </div>
         </section>
