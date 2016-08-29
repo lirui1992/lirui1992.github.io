@@ -87,14 +87,14 @@
 <meta name="description" content="题目描述Given an array of integers, every element appears twice except for one. Find that single one.
 解法一使用位异或操作求解。123456789public class Solution &amp;#123;    public int singleNumber(int[] nums) &amp;#123;">
 <meta property="og:type" content="article">
-<meta property="og:title" content="LeetCode|#136.Single Number">
+<meta property="og:title" content="LeetCode#136.Single Number">
 <meta property="og:url" content="http://lirui1992.github.io/2016/08/29/LeetCode-136-Single-Number/index.html">
 <meta property="og:site_name" content="lirui's blog">
 <meta property="og:description" content="题目描述Given an array of integers, every element appears twice except for one. Find that single one.
 解法一使用位异或操作求解。123456789public class Solution &amp;#123;    public int singleNumber(int[] nums) &amp;#123;">
-<meta property="og:updated_time" content="2016-08-29T12:36:00.597Z">
+<meta property="og:updated_time" content="2016-08-29T12:39:39.645Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="LeetCode|#136.Single Number">
+<meta name="twitter:title" content="LeetCode#136.Single Number">
 <meta name="twitter:description" content="题目描述Given an array of integers, every element appears twice except for one. Find that single one.
 解法一使用位异或操作求解。123456789public class Solution &amp;#123;    public int singleNumber(int[] nums) &amp;#123;">
 
@@ -119,7 +119,7 @@
 
   <link rel="canonical" href="http://lirui1992.github.io/2016/08/29/LeetCode-136-Single-Number/"/>
 
-  <title> LeetCode|#136.Single Number | lirui's blog </title>
+  <title> LeetCode#136.Single Number | lirui's blog </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -239,7 +239,7 @@
             
             
               
-                LeetCode|#136.Single Number
+                LeetCode#136.Single Number
               
             
           </h1>
@@ -281,6 +281,7 @@
       
         <h1 id="题目描述"><a href="#题目描述" class="headerlink" title="题目描述"></a>题目描述</h1><p>Given an array of integers, every element appears twice except for one. Find that single one.</p>
 <h1 id="解法一"><a href="#解法一" class="headerlink" title="解法一"></a>解法一</h1><p>使用位异或操作求解。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">public class Solution &#123;</div><div class="line">    public int singleNumber(int[] nums) &#123;</div><div class="line">        int result = 0;</div><div class="line">        for (int i = 0; i &lt; nums.length; i++) &#123;</div><div class="line">            result ^= nums[i];</div><div class="line">        &#125;</div><div class="line">        return result;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<a id="more"></a>
 <h1 id="解法二"><a href="#解法二" class="headerlink" title="解法二"></a>解法二</h1><p>使用HashSet求解，遍历数组，如果set中存在这个数，则将其从set中移出，若不存在，则在set中保存这个数。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">public class Solution &#123;</div><div class="line">    public int singleNumber(int[] nums) &#123;</div><div class="line">        Set set = new HashSet();</div><div class="line">        for (int i = 0; i &lt; nums.length; i++) &#123;</div><div class="line">            if (set.contains(nums[i])) &#123;</div><div class="line">                set.remove(nums[i]);</div><div class="line">            &#125; else &#123;</div><div class="line">                set.add(nums[i]);</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        Iterator it = set.iterator();</div><div class="line">        return (Integer)it.next();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
 
       
