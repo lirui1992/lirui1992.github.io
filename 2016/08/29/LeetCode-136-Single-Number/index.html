@@ -68,7 +68,7 @@
 <link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="Hexo, NexT" />
+  <meta name="keywords" content="算法,LeetCode,Hash Table,Bit Manipulation," />
 
 
 
@@ -84,12 +84,19 @@
 
 
 
-<meta property="og:type" content="website">
-<meta property="og:title" content="lirui's blog">
-<meta property="og:url" content="http://lirui1992.github.io/index.html">
+<meta name="description" content="题目描述Given an array of integers, every element appears twice except for one. Find that single one.
+解法一使用位异或操作求解。123456789public class Solution &amp;#123;    public int singleNumber(int[] nums) &amp;#123;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="LeetCode|#136.Single Number">
+<meta property="og:url" content="http://lirui1992.github.io/2016/08/29/LeetCode-136-Single-Number/index.html">
 <meta property="og:site_name" content="lirui's blog">
+<meta property="og:description" content="题目描述Given an array of integers, every element appears twice except for one. Find that single one.
+解法一使用位异或操作求解。123456789public class Solution &amp;#123;    public int singleNumber(int[] nums) &amp;#123;">
+<meta property="og:updated_time" content="2016-08-29T12:36:00.597Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="lirui's blog">
+<meta name="twitter:title" content="LeetCode|#136.Single Number">
+<meta name="twitter:description" content="题目描述Given an array of integers, every element appears twice except for one. Find that single one.
+解法一使用位异或操作求解。123456789public class Solution &amp;#123;    public int singleNumber(int[] nums) &amp;#123;">
 
 
 
@@ -110,9 +117,9 @@
 
 
 
-  <link rel="canonical" href="http://lirui1992.github.io/"/>
+  <link rel="canonical" href="http://lirui1992.github.io/2016/08/29/LeetCode-136-Single-Number/"/>
 
-  <title> lirui's blog </title>
+  <title> LeetCode|#136.Single Number | lirui's blog </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -133,9 +140,7 @@
     
   
 
-  <div class="container one-collumn sidebar-position-left 
-   page-home 
- ">
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -212,9 +217,9 @@
         <div class="content-wrap">
           <div id="content" class="content">
             
-  <section id="posts" class="posts-expand">
+
+  <div id="posts" class="posts-expand">
     
-      
 
   
   
@@ -234,10 +239,7 @@
             
             
               
-                
-                <a class="post-title-link" href="/2016/08/29/LeetCode-136-Single-Number/" itemprop="url">
-                  LeetCode|#136.Single Number
-                </a>
+                LeetCode|#136.Single Number
               
             
           </h1>
@@ -277,334 +279,69 @@
       
 
       
-        
-          
-            <h1 id="题目描述"><a href="#题目描述" class="headerlink" title="题目描述"></a>题目描述</h1><p>Given an array of integers, every element appears twice except for one. Find that single one.</p>
+        <h1 id="题目描述"><a href="#题目描述" class="headerlink" title="题目描述"></a>题目描述</h1><p>Given an array of integers, every element appears twice except for one. Find that single one.</p>
 <h1 id="解法一"><a href="#解法一" class="headerlink" title="解法一"></a>解法一</h1><p>使用位异或操作求解。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">public class Solution &#123;</div><div class="line">    public int singleNumber(int[] nums) &#123;</div><div class="line">        int result = 0;</div><div class="line">        for (int i = 0; i &lt; nums.length; i++) &#123;</div><div class="line">            result ^= nums[i];</div><div class="line">        &#125;</div><div class="line">        return result;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
 <h1 id="解法二"><a href="#解法二" class="headerlink" title="解法二"></a>解法二</h1><p>使用HashSet求解，遍历数组，如果set中存在这个数，则将其从set中移出，若不存在，则在set中保存这个数。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">public class Solution &#123;</div><div class="line">    public int singleNumber(int[] nums) &#123;</div><div class="line">        Set set = new HashSet();</div><div class="line">        for (int i = 0; i &lt; nums.length; i++) &#123;</div><div class="line">            if (set.contains(nums[i])) &#123;</div><div class="line">                set.remove(nums[i]);</div><div class="line">            &#125; else &#123;</div><div class="line">                set.add(nums[i]);</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        Iterator it = set.iterator();</div><div class="line">        return (Integer)it.next();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
 
-          
+      
+    </div>
+
+    <div>
+      
         
+
       
     </div>
 
     <div>
       
-    </div>
+        
 
-    <div>
       
     </div>
 
     <footer class="post-footer">
       
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2016/08/23/《深入理解Java虚拟机》-垃圾收集器与内存分配策略/" itemprop="url">
-                  《深入理解Java虚拟机》---垃圾收集器与内存分配策略
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-08-23T22:43:15+08:00" content="2016-08-23">
-              2016-08-23
-            </time>
-          </span>
-
+        <div class="post-tags">
           
-
+            <a href="/tags/算法/" rel="tag">#算法</a>
           
-            
+            <a href="/tags/LeetCode/" rel="tag">#LeetCode</a>
           
-
+            <a href="/tags/Hash-Table/" rel="tag">#Hash Table</a>
           
-
-          
-          
-
+            <a href="/tags/Bit-Manipulation/" rel="tag">#Bit Manipulation</a>
           
         </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
       
 
       
-        
-          <p>程序计数器、虚拟机栈、本地方法栈这三个区域随线程而生，随线程而灭，这几个区域的内存分配和回收都具备确定性，在这几个区域内就不需要过多考虑回收的问题，因为方法结束或者线程结束时，内存自然就跟着回收了。而Java堆和方法区则不一样，一个接口中的多个实现类需要的内存可能不一样，一个方法中的多个分支需要的内存也可能不一样，我们只有在程序处于运行期间时才能知道会创建哪些对象，这部分内存的分配和回收都是动态的，垃圾收集器所关注的是这部分内存。<br>
-          <div class="post-more-link text-center">
-            <a class="btn" href="/2016/08/23/《深入理解Java虚拟机》-垃圾收集器与内存分配策略/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/08/23/《深入理解Java虚拟机》-垃圾收集器与内存分配策略/" rel="next" title="《深入理解Java虚拟机》---垃圾收集器与内存分配策略">
+                <i class="fa fa-chevron-left"></i> 《深入理解Java虚拟机》---垃圾收集器与内存分配策略
+              </a>
+            
           </div>
-        
-      
-    </div>
 
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
+          <div class="post-nav-prev post-nav-item">
             
-            
-              
-                
-                <a class="post-title-link" href="/2016/08/21/《深入理解Java虚拟机》-自动内存管理机制/" itemprop="url">
-                  《深入理解Java虚拟机》---自动内存管理机制
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-08-21T11:08:22+08:00" content="2016-08-21">
-              2016-08-21
-            </time>
-          </span>
-
-          
-
-          
-            
-          
-
-          
-
-          
-          
-
-          
+          </div>
         </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
       
 
       
-        
-          <p>最近开始看《深入理解Java虚拟机_JVM高级特性与最佳实践》这本经典书籍，感觉不错，语言描述清晰，让人读着很舒服，确实是一本好书。感觉有些东西学了之后过不多久就会忘记，能够在学过之后写一下读书笔记，整理一下思路，在加深记忆的同时，也能够对这个知识点有更深层次的理解。</p>
-<blockquote>
-<p>Java与C++之间有一堵由内存动态分配和垃圾收集技术所围成的“高墙”，墙外面的人想进去，墙里面的人却想出来。</p>
-</blockquote>
-<p>确实如作者所说，对于Java，我们不需要过分关注于它的内存管理细节，JVM为我们做了它能做的一切。可是，当我们对一个事物不甚了解时，我们又对它充满了好奇。但是，当我们真正像使用C++一样需要自己动手进行内存管理时，我们又对这其中的细节不胜其烦。同时，了解JVM的内存模型以及它的自动内存管理机制也是很有必要的。<br>
-          <div class="post-more-link text-center">
-            <a class="btn" href="/2016/08/21/《深入理解Java虚拟机》-自动内存管理机制/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
       
     </footer>
   </article>
 
 
-    
-      
 
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2016/08/16/WAMP环境下安装PHP的MongoDB扩展/" itemprop="url">
-                  WAMP环境下安装PHP的MongoDB扩展
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-08-16T20:52:38+08:00" content="2016-08-16">
-              2016-08-16
-            </time>
-          </span>
-
-          
-
-          
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <p>因为项目需要，我在自己的Win7环境下搭建了WAMP，并且安装了MongoDB数据库。以前没有用过NoSQL数据库，用过之后发现MongoDB真是好用啊！！！不过在环境配置过程中也着实遇到了一些坑，这篇博文记录了安装PHP的MongoDB扩展的过程，自己碰到的坑会重点标识出来。<br>
-          <div class="post-more-link text-center">
-            <a class="btn" href="/2016/08/16/WAMP环境下安装PHP的MongoDB扩展/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-        
+    <div class="post-spread">
       
     </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-  </section>
-
-  
+  </div>
 
 
           </div>
@@ -612,6 +349,10 @@
 
 
           
+  <div class="comments" id="comments">
+    
+  </div>
+
 
         </div>
         
@@ -631,8 +372,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview sidebar-panel  sidebar-panel-active ">
+      <section class="site-overview sidebar-panel ">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
           <img class="site-author-image" itemprop="image"
                src="https://raw.githubusercontent.com/lirui1992/MarkdownPhotos/master/res/4.jpg"
@@ -709,6 +459,17 @@
 
       </section>
 
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#题目描述"><span class="nav-number">1.</span> <span class="nav-text">题目描述</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#解法一"><span class="nav-number">2.</span> <span class="nav-text">解法一</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#解法二"><span class="nav-number">3.</span> <span class="nav-text">解法二</span></a></li></ol></div>
+            
+          </div>
+        </section>
       
 
     </div>
@@ -812,6 +573,10 @@
 
 
   
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
 
   
 
