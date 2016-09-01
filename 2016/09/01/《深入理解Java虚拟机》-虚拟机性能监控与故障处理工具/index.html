@@ -92,7 +92,7 @@
 <meta property="og:description" content="概述给一个系统定位问题的时候，知识、经验是关键基础，数据是依据，工具是运用知识处理数据的手段。这里说的数据包括：运行日志、异常堆栈、GC日志、线程快照（threaddump / javacore文件）、堆转储快照（heapdump / hprof文件）等。经常使用适当的虚拟机监控和分析工具可以加快我们分析数据、定位解决问题的速度，但在学习工具前，也应当意识到工具永远都是知识技能的一层包装，没有什么">
 <meta property="og:image" content="https://raw.githubusercontent.com/lirui1992/MarkdownPhotos/master/res/7.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/lirui1992/MarkdownPhotos/master/res/8.png">
-<meta property="og:updated_time" content="2016-09-01T05:34:46.722Z">
+<meta property="og:updated_time" content="2016-09-01T11:12:15.153Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="《深入理解Java虚拟机》---虚拟机性能监控与故障处理工具">
 <meta name="twitter:description" content="概述给一个系统定位问题的时候，知识、经验是关键基础，数据是依据，工具是运用知识处理数据的手段。这里说的数据包括：运行日志、异常堆栈、GC日志、线程快照（threaddump / javacore文件）、堆转储快照（heapdump / hprof文件）等。经常使用适当的虚拟机监控和分析工具可以加快我们分析数据、定位解决问题的速度，但在学习工具前，也应当意识到工具永远都是知识技能的一层包装，没有什么">
@@ -280,7 +280,7 @@
 
       
         <h1 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h1><p>给一个系统定位问题的时候，知识、经验是关键基础，数据是依据，工具是运用知识处理数据的手段。这里说的数据包括：运行日志、异常堆栈、GC日志、线程快照（threaddump / javacore文件）、堆转储快照（heapdump / hprof文件）等。经常使用适当的虚拟机监控和分析工具可以加快我们分析数据、定位解决问题的速度，但在学习工具前，也应当意识到工具永远都是知识技能的一层包装，没有什么工具是“秘密武器”，不可能学会了就能包治百病。<br><a id="more"></a></p>
-<h1 id="JDK的命令行工具"><a href="#JDK的命令行工具" class="headerlink" title="JDK的命令行工具"></a>JDK的命令行工具</h1><p>在JDK的bin目录中有一些被Sun公司作为“礼物”附赠给JDK使用者的故障处理工具，并在软件的使用说明中把它们声明为“没有技术支持并且是实验性质的”的产品，但事实上，这些工具都非常稳定而且功能强大，能在处理应用程序性能问题、定位故障时发挥很大的作用。这些工具大多是jdk/lib/tools.jar类库的一层薄包装，它们主要的功能代码是在tools类库中实现的。<br><img src="https://raw.githubusercontent.com/lirui1992/MarkdownPhotos/master/res/7.png" alt="Sun JDK 中的工具目录" title="Sun JDK 中的工具目录"><br><img src="https://raw.githubusercontent.com/lirui1992/MarkdownPhotos/master/res/8.png" alt="tools.jar 包的内部状况" title="tools.jar 包的内部状况"></p>
+<h1 id="JDK的命令行工具"><a href="#JDK的命令行工具" class="headerlink" title="JDK的命令行工具"></a>JDK的命令行工具</h1><p>在JDK的bin目录中有一些被Sun公司作为“礼物”附赠给JDK使用者的故障处理工具，并在软件的使用说明中把它们声明为“没有技术支持并且是实验性质的”的产品，但事实上，这些工具都非常稳定而且功能强大，能在处理应用程序性能问题、定位故障时发挥很大的作用。这些工具大多是jdk/lib/tools.jar类库的一层薄包装，它们主要的功能代码是在tools类库中实现的。<br><img src="https://raw.githubusercontent.com/lirui1992/MarkdownPhotos/master/res/7.png" alt="Sun JDK 中的工具目录" title="Sun JDK 中的工具目录"><br><img src="https://raw.githubusercontent.com/lirui1992/MarkdownPhotos/master/res/8.png" alt="tools.jar 包的内部状况" title="tools.jar 包的内部状况"><br>| column | column |<br>|——–|——–|<br>|    得到    |  得到      |</p>
 
       
     </div>
