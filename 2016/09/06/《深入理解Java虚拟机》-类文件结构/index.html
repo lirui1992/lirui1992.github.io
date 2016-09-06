@@ -1,0 +1,616 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="读书笔记,JVM,Class文件," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="平台无关性Java 是与平台无关的语言，这得益于 Java 源代码编译后生成的字节码文件，即 Class 文件，以及 Java 虚拟机的实现。不仅使用 Java 编译器可以把 Java 代码编译成存储字节码的 Class 文件，使用 JRuby 等其他语言的编译器也可以把程序代码编译成 Class 文件，虚拟机并不关心 Class 的来源是什么语言，只要它符合一定的结构，就可以在 JVM 中运行。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="《深入理解Java虚拟机》---类文件结构">
+<meta property="og:url" content="http://lirui1992.github.io/2016/09/06/《深入理解Java虚拟机》-类文件结构/index.html">
+<meta property="og:site_name" content="lirui's blog">
+<meta property="og:description" content="平台无关性Java 是与平台无关的语言，这得益于 Java 源代码编译后生成的字节码文件，即 Class 文件，以及 Java 虚拟机的实现。不仅使用 Java 编译器可以把 Java 代码编译成存储字节码的 Class 文件，使用 JRuby 等其他语言的编译器也可以把程序代码编译成 Class 文件，虚拟机并不关心 Class 的来源是什么语言，只要它符合一定的结构，就可以在 JVM 中运行。">
+<meta property="og:image" content="https://raw.githubusercontent.com/lirui1992/MarkdownPhotos/master/res/classtable.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/lirui1992/MarkdownPhotos/master/res/constant_pool.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/lirui1992/MarkdownPhotos/master/res/fields.jpg">
+<meta property="og:updated_time" content="2016-09-06T05:07:05.825Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="《深入理解Java虚拟机》---类文件结构">
+<meta name="twitter:description" content="平台无关性Java 是与平台无关的语言，这得益于 Java 源代码编译后生成的字节码文件，即 Class 文件，以及 Java 虚拟机的实现。不仅使用 Java 编译器可以把 Java 代码编译成存储字节码的 Class 文件，使用 JRuby 等其他语言的编译器也可以把程序代码编译成 Class 文件，虚拟机并不关心 Class 的来源是什么语言，只要它符合一定的结构，就可以在 JVM 中运行。">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/lirui1992/MarkdownPhotos/master/res/classtable.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://lirui1992.github.io/2016/09/06/《深入理解Java虚拟机》-类文件结构/"/>
+
+  <title> 《深入理解Java虚拟机》---类文件结构 | lirui's blog </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">lirui's blog</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                《深入理解Java虚拟机》---类文件结构
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-09-06T10:28:55+08:00" content="2016-09-06">
+              2016-09-06
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="平台无关性"><a href="#平台无关性" class="headerlink" title="平台无关性"></a>平台无关性</h2><p>Java 是与平台无关的语言，这得益于 Java 源代码编译后生成的字节码文件，即 Class 文件，以及 Java 虚拟机的实现。不仅使用 Java 编译器可以把 Java 代码编译成存储字节码的 Class 文件，使用 JRuby 等其他语言的编译器也可以把程序代码编译成 Class 文件，虚拟机并不关心 Class 的来源是什么语言，只要它符合一定的结构，就可以在 JVM 中运行。Java 语言中的各种变量、关键字和运算符的语义最终都是由多条字节码命令组合而成的，因此字节码命令所能提供的语义描述能力肯定会比 Java 语言本身更强大，这便为其他语言实现一些有别于 Java 的语言特性提供了基础，而且这也正是在类加载时要进行安全验证的原因。<br><a id="more"></a></p>
+<h2 id="类文件结构"><a href="#类文件结构" class="headerlink" title="类文件结构"></a>类文件结构</h2><p>Class 文件是一组以8位字节为基础单位的二进制流，各个数据项目严格按照顺序紧凑地排列在Class文件之中，中间没有添加任何分隔符，这使得整个Class文件中存储的内容几乎全部是程序运行的必要数据，没有空隙存在。当遇到需要占用8位字节以上空间的数据项时，则会按照高位在前的方式分割成若干个8位字节进行存储。根据 Java 虚拟机规范的规定，Class 文件格式采用一种类似于 C 语言结构体的伪结构来存储，这种伪结构中只有两种数据类型：无符号数和表。无符号数属于基本数据类型，以 u1、u2、u4、u8 来分别代表 1、2、4、8 个字节的无符号数。表是由多个无符号数或其他表作为数据项构成的符合数据类型，所有的表都习惯性地以“_info”结尾。整个 Class 文件本质上就是一张表，它由如下所示的数据项构成。<br>从表中可以看出，无论是无符号数还是表，当需要描述同一类型但数量不定的多个数据时，经常会使用一个前置的容量计数器加若干个连续的该数据项的形式，称这一系列连续的摸一个类型的数据为某一类型的集合，比如，fields_count 个 field_info 表数据构成了字段表集合。这里需要说明的是：Class 文件中的数据项，都是严格按照上表中的顺序和数量被严格限定的，每个字节代表的含义，长度，先后顺序等都不允许改变。<br>下表列出了 Class 文件中各个数据项的具体含义：<br><img src="https://raw.githubusercontent.com/lirui1992/MarkdownPhotos/master/res/classtable.jpg" alt="Class 文件格式" title="Class文件格式"><br>从表中可以看出，无论是无符号数还是表，当需要描述同一类型但数量不定的多个数据时，经常会在其前面使用一个前置的容量计数器来记录其数量，而便跟着若干个连续的数据项，称这一系列连续的某一类型的数据为某一类型的集合，如：methods_count 个 methods_info 表数据便组成了方法表集合。这里需要注意的是：Class 文件中各数据项是按照上表的顺序和数量被严格限定的，每个字节代表的含义、长度、先后顺序都不允许改变。</p>
+<h3 id="magic-amp-amp-version"><a href="#magic-amp-amp-version" class="headerlink" title="magic &amp;&amp; version"></a>magic &amp;&amp; version</h3><p>每个 Class 文件的头 4 个字节称为魔数（magic），它的唯一作用是判断该文件是否为一个能被虚拟机接受的 Class 文件。它的值固定为 0xCAFEBABE。紧接着 magic 的 4 个字节存储的是 Class 文件的次版本号和主版本号，高版本的 JDK 能向下兼容低版本的 Class 文件，但不能运行更高版本的 Class 文件。</p>
+<h3 id="constant-pool"><a href="#constant-pool" class="headerlink" title="constant_pool"></a>constant_pool</h3><p>major_version 之后是常量池（constant_pool）的入口，它是 Class 文件中与其他项目关联最多的数据类型，也是占用 Class 文件空间最大的数据项目之一。<br>常量池中主要存放两大类常量：字面量和符号引用。字面量比较接近于 Java 层面的常量概念，如文本字符串、被声明为 final 的常量值等。而符号引用总结起来则包括了下面三类常量：</p>
+<ul>
+<li>类和接口的全限定名（即带有包名的 Class 名，如：org.lxh.test.TestClass）</li>
+<li>字段的名称和描述符（private、static 等描述符）</li>
+<li>方法的名称和描述符（private、static 等描述符）</li>
+</ul>
+<p>虚拟机在加载 Class 文件时才会进行动态链接，也就是说，在Class文件中不会保存各个方法、字段的最终内存布局信息，因此这些字段、方法的符号引用不经过运行期转换的话无法得到真正的内存入口地址，也就无法直接被虚拟机使用。当虚拟机运行时需要从常量池获得对应的符号引用，再在类创建时或运行时解析、翻译到具体的内存地址中。<br>常量池中每一项常量都有一个表，共有11种（JDK1.7 之前）结构各不相同的表结构数据，每种表开始的第一位是一个u1类型的标志位（1-12，缺少2），代表当前这个常量属于的常量类型。11种常量类型所代表的具体含义如下表所示：<br><img src="https://raw.githubusercontent.com/lirui1992/MarkdownPhotos/master/res/constant_pool.jpg" alt="常量池的项目类型" title="常量池的项目类型"><br>这 11 种常量类型各自均有自己的结构。在 CONSTANT_Class_info 型常量的结构中有一项 name_index 属性，该常属性中存放一个索引值，指向常量池中一个 CONSTANT_Utf8_info 类型的常量，该常量中即保存了该类的全限定名字符串。而 CONSTANT_Fieldref_info、CONSTANT_Methodref_info、CONSTANT_InterfaceMethodref_info 型常量的结构中都有一项index属性，存放该字段或方法所属的类或接口的描述符 CONSTANT_Class_info 的索引项。另外，最终保存的诸如 Class 名、字段名、方法名、修饰符等字符串都是一个 CONSTANT_Utf8_info 类型的常量，也因此，Java 中方法和字段名的最大长度也即是CONSTANT_Utf8_info 型常量的最大长度，在 CONSTANT_Utf8_info 型常量的结构中有一项 length 属性，它是 u2 类型的，即占用 2 个字节，那么它的最大的 length 即为 65535。因此，Java 程序中如果定义了超过 64KB 英文字符的变量或方法名，将会无法编译。</p>
+<h3 id="access-flag"><a href="#access-flag" class="headerlink" title="access_flag"></a>access_flag</h3><p>在常量池结束之后，紧接着的 2 个字节代表访问标志（access_flag），这个标志用于识别一些类或接口层次的访问信息，包括：这个 Class 是类还是接口，是否定义为 public 类型，abstract 类型，如果是类的话，是否声明为 final，等等。每种访问信息都由一个十六进制的标志值表示，如果同时具有多种访问信息，则得到的标志值为这几种访问信息的标志值的逻辑或。</p>
+<h3 id="this-class、super-class、interfaces"><a href="#this-class、super-class、interfaces" class="headerlink" title="this_class、super_class、interfaces"></a>this_class、super_class、interfaces</h3><p>类索引（this_class）和父类索引（super_class）都是一个 u2 类型的数据，而接口索引集合（interfaces）则是一组 u2 类型的数据集合，Class 文件中由这三项数据来确定这个类的继承关系。类索引、父类索引和接口索引集合都按照顺序排列在访问标志之后，类索引和父类索引两个 u2 类型的索引值表示，它们各自指向一个类型为 COMNSTANT_Class_info 的类描述符常量，通过该常量中的索引值找到定义在 COMNSTANT_Utf8_info 类型的常量中的全限定名字符串。而接口索引集合就用来描述这个类实现了哪些接口，这些被实现的接口将按 implements 语句（如果这个类本身是个接口，则应当是 extend 语句）后的接口顺序从左到右排列在接口的索引集合中。</p>
+<h3 id="fields"><a href="#fields" class="headerlink" title="fields"></a>fields</h3><p>字段表（field_info）用于描述接口或类中声明的变量。字段包括了类级变量或实例级变量，但不包括在方法内声明的变量。字段的名字、数据类型、修饰符等都是无法固定的，只能引用常量池中的常量来描述。下面是字段表的最终格式：<br><img src="https://raw.githubusercontent.com/lirui1992/MarkdownPhotos/master/res/fields.jpg" alt="字段表结构" title="字段表结构"></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/读书笔记/" rel="tag">#读书笔记</a>
+          
+            <a href="/tags/JVM/" rel="tag">#JVM</a>
+          
+            <a href="/tags/Class文件/" rel="tag">#Class文件</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/09/01/《深入理解Java虚拟机》-虚拟机性能监控与故障处理工具/" rel="next" title="《深入理解Java虚拟机》---虚拟机性能监控与故障处理工具">
+                <i class="fa fa-chevron-left"></i> 《深入理解Java虚拟机》---虚拟机性能监控与故障处理工具
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="https://raw.githubusercontent.com/lirui1992/MarkdownPhotos/master/res/4.jpg"
+               alt="李瑞" />
+          <p class="site-author-name" itemprop="name">李瑞</p>
+          <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">6</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">15</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/lirui1992" target="_blank" title="Github">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  Github
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/2641873435" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                  Weibo
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              友情链接
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://blog.novsec.cn/" title="novsec" target="_blank">novsec</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#平台无关性"><span class="nav-number">1.</span> <span class="nav-text">平台无关性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#类文件结构"><span class="nav-number">2.</span> <span class="nav-text">类文件结构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#magic-amp-amp-version"><span class="nav-number">2.1.</span> <span class="nav-text">magic && version</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#constant-pool"><span class="nav-number">2.2.</span> <span class="nav-text">constant_pool</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#access-flag"><span class="nav-number">2.3.</span> <span class="nav-text">access_flag</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#this-class、super-class、interfaces"><span class="nav-number">2.4.</span> <span class="nav-text">this_class、super_class、interfaces</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#fields"><span class="nav-number">2.5.</span> <span class="nav-text">fields</span></a></li></ol></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">李瑞</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
